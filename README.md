@@ -2,9 +2,6 @@
 
 A hands-on collection of five end-to-end training recipes using **Unsloth** and **Hugging Face** tooling. Each part is a self-contained Colab/Notebook script that demonstrates a different training strategy on small, fast models you can run on a single T4/L4 GPU.
 
-## Why this repo?
-To make it easy to learn/teach modern LLM training workflows—from smoke-testing and supervised finetuning, through **LoRA**, preference optimization (**DPO/GRPO**), to continued pretraining—without heavy infra.
-
 ## 📦 Repository layout
 ```
 .
@@ -21,9 +18,6 @@ Each folder contains a single notebook/script you can run as-is on Colab.
 - A GPU is recommended (Colab T4 works). Scripts print CUDA/device info and fall back to CPU if needed.  
 - Hugging Face account for some workflows (optional but useful).
 
-## 🚀 Quick start (Colab)
-Open the notebook in the part you want and run the cells top-to-bottom. Every script prints a ✅ “Step complete” banner after each stage so you always know where you are.  
-**Tip:** Unsloth must be imported before transformers/peft/datasets so its patches activate.
 
 ## 🧩 Parts overview
 
@@ -89,29 +83,5 @@ from unsloth import FastLanguageModel
 | 4 | 10–20 min | varies |
 | 5 | few mins | small |
 
-## 🧪 Minimal smoke test
-```python
-from unsloth import FastLanguageModel
-import torch
-model, tok = FastLanguageModel.from_pretrained(
-    model_name="unsloth/smollm2-135m",
-    max_seq_length=1024,
-    dtype=torch.float16,
-    load_in_4bit=False,
-    device_map="auto",
-)
-text = "You are a helpful assistant. Say hello in one short sentence."
-out = model.generate(**tok(text, return_tensors="pt").to(model.device), max_new_tokens=24, do_sample=False)
-print(tok.decode(out[0], skip_special_tokens=True))
-```
 
-## 🧰 Troubleshooting
-- `ValueError: chat_template` → Use plain `"User: ...
-Assistant:"` prompts.  
-- OOM/CUDA → Reduce batch size or sequence length.  
-- “Frozen” training → Lower `logging_steps`.  
-- Disable W&B:  
-```python
-import os
-os.environ["WANDB_DISABLED"] = "true"
-```
+
