@@ -2,6 +2,8 @@
 
 A hands-on collection of five end-to-end training recipes using **Unsloth** and **Hugging Face** tooling. Each part is a self-contained Colab/Notebook script that demonstrates a different training strategy on small, fast models you can run on a single T4/L4 GPU.
 
+Youtube: [Demo](https://youtube.com/playlist?list=PLps8its2VEvkvc0QKImtAM67ugnTo3EiM&si=HlUm1D-Kng-MxSec)
+
 ## 📦 Repository layout
 ```
 .
@@ -21,7 +23,7 @@ Each folder contains a single notebook/script you can run as-is on Colab.
 
 ## 🧩 Parts overview
 
-### Part 1 — Full finetuning SmolLM2 (SFT sanity check)
+### Part 1 — Finetuning using SmolLM2 
 **Model:** `HuggingFaceTB/SmolLM2-135M` (loaded via `FastLanguageModel`)  
 **Data:** `ag_news` (falls back to `dbpedia_14` if needed)  
 **Flow:** Environment check + smoke generation → Deterministic splits → SFT training → Eval  
@@ -41,14 +43,14 @@ from unsloth import FastLanguageModel
 ```
 **Outputs:** `outputs_lora_agnews/`, `/content/SmolLM2-135M-AGNews-LoRA`
 
-### Part 3 — Preference optimization with DPO + merge
+### Part 3 — Preference optimization with DPO 
 **Model:** `unsloth/smollm2-135m` (LoRA 4-bit, merged FP16).  
 **Data:** `Dahoas/full-hh-rlhf` / `Dahoas/synthetic-instruct-gptj-pairwise` / `Anthropic/hh-rlhf`  
 **Flow:** Reduce → DPOTrainer → Train → Merge → Eval  
 **Trainer args:** `lr=5e-5`, `batch=2`, `grad_accum=8`.  
 **Outputs:** `preference_rl_model/`, `preference_rl_model_merged/`
 
-### Part 4 — RL with GRPO (toy math, custom reward)
+### Part 4 — RL with GRPO 
 **Model:** `unsloth/smollm2-135m` + LoRA (4-bit optional).  
 **Flow:** Prompt build → Reward fn → GRPOTrainer → Eval  
 **Install:**
@@ -57,7 +59,7 @@ from unsloth import FastLanguageModel
 ```
 **Config:** `num_generations=4`, adjust batch multiple, prompt length.
 
-### Part 5 — Continued pretraining (Hindi mini-corpus)
+### Part 5 — Continued pretraining
 **Model:** `unsloth/llama-3-8b-Instruct-bnb-4bit` + LoRA.  
 **Data:** Tiny Hindi corpus (replace with your dataset).  
 **Flow:** Tokenize → Train causal LM → Save → Hindi generation  
@@ -73,15 +75,6 @@ from unsloth import FastLanguageModel
 - Set `tokenizer.pad_token = tokenizer.eos_token` if missing.  
 - For memory: `gradient_checkpointing="unsloth"`.  
 - For inference: `FastLanguageModel.for_inference(model)`.
-
-## 📈 Expected footprints (T4)
-| Part | Duration | Memory |
-|------|-----------|--------|
-| 1 | 8–10 min | 6–8 GB |
-| 2 | 5–8 min | 4–6 GB |
-| 3 | 10–15 min | +1–2 min merge |
-| 4 | 10–20 min | varies |
-| 5 | few mins | small |
 
 
 
